@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">MyTrack</string>
+    <string name="title_activity_main">MainActivity</string>
     <string name="title_activity_maps">MapsActivity</string>
+    <string name="title_statistics">Statistics</string>
+    <string name="title_activities">Activities</string>
+    <string name="title_areas">Areas</string>
+    <string name="title_settings">Settings</string>
 </resources>
