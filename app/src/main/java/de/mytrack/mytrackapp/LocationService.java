@@ -98,7 +98,7 @@ public class LocationService extends LifecycleService implements LocationListene
 
         // TODO: maybe use other providers too
         // TODO: update params
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 10, this);
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10 * 60 * 1000, 0, this);
     }
 
     @Override
