@@ -1,6 +1,10 @@
 package de.mytrack.mytrackapp;
 
 import android.Manifest;
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -10,11 +14,16 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import java.util.List;
+
+import de.mytrack.mytrackapp.data.AppDatabase;
+import de.mytrack.mytrackapp.data.TimeLocation;
 import de.mytrack.mytrackapp.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
@@ -74,6 +83,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startLocationService() {
+        /*
         // create an intent for the service
         Intent locationServiceIntent = new Intent(this, LocationService.class);
 
@@ -83,6 +93,19 @@ public class MainActivity extends AppCompatActivity {
         } else {
             startService(locationServiceIntent);
         }
+        */
+
+        // use new smart service
+        SmartLocationService.startService(this);
+
+        // print the whole database
+        AppDatabase.getInstance(this).locationDao().getAll().observe(this, timeLocations -> {
+            Log.d("main", "===================================================");
+            for (TimeLocation timeLoc : timeLocations) {
+                Log.d("main", timeLoc.id + ": (" + timeLoc.latitude + ", " + timeLoc.longitude + ") at " + timeLoc.time);
+            }
+            Log.d("main", "===================================================");
+        });
     }
 
 }

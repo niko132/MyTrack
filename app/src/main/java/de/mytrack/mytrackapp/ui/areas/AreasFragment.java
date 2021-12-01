@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.transition.TransitionManager;
 
@@ -25,9 +26,14 @@ import com.google.android.gms.maps.model.Polygon;
 import com.google.android.gms.maps.model.PolygonOptions;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.function.Consumer;
 
 import de.mytrack.mytrackapp.R;
+import de.mytrack.mytrackapp.data.AppDatabase;
+import de.mytrack.mytrackapp.data.TimeLocation;
 import de.mytrack.mytrackapp.databinding.FragmentAreasBinding;
 
 public class AreasFragment extends Fragment implements OnMapReadyCallback {
@@ -123,6 +129,10 @@ public class AreasFragment extends Fragment implements OnMapReadyCallback {
     // hold a list of all shown polygons
     private final List<DraggablePolygon> mPolygons = new ArrayList<>();
     private DraggablePolygon mCurrentFocused = null;
+
+
+    private List<Marker> mHistoryMarkers = new ArrayList<>();
+
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -227,6 +237,43 @@ public class AreasFragment extends Fragment implements OnMapReadyCallback {
                     DraggablePolygon dragPoly = new DraggablePolygon(mMap, area);
                     mPolygons.add(dragPoly);
                 }
+            }
+        });
+
+
+
+
+        // today
+        Calendar begin = new GregorianCalendar();
+
+        // show the day before n days
+        begin.add(Calendar.DAY_OF_MONTH, 0);
+
+        // reset hour, minutes, seconds and millis
+        begin.set(Calendar.HOUR_OF_DAY, 0);
+        begin.set(Calendar.MINUTE, 0);
+        begin.set(Calendar.SECOND, 0);
+        begin.set(Calendar.MILLISECOND, 0);
+
+        Calendar end = (Calendar) begin.clone();
+
+        // next day
+        end.add(Calendar.DAY_OF_MONTH, 1);
+
+        AppDatabase.getInstance(getContext()).locationDao().getAllBetween(begin.getTime().getTime(), end.getTime().getTime()).observe(getViewLifecycleOwner(), timeLocations -> {
+            Log.d("main", "Fetched " + timeLocations.size() + " positions");
+
+            for (Marker marker : mHistoryMarkers) {
+                marker.remove();
+            }
+            mHistoryMarkers.clear();
+
+            for (TimeLocation location : timeLocations) {
+                LatLng latLng = new LatLng(location.latitude, location.longitude);
+
+                Marker marker = mMap.addMarker(new MarkerOptions()
+                        .position(latLng));
+                mHistoryMarkers.add(marker);
             }
         });
     }
