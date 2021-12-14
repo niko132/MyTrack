@@ -48,7 +48,7 @@ public class SmartLocationService extends JobService {
     private static final int JOB_ID = 123;
 
 
-    private static final long PARAM_RUN_INTERVAL_MS = 10 * 60 * 1000; // 10min
+    private static final long PARAM_RUN_INTERVAL_MS =  10 * 60 * 1000; // 10min
     private static final long PARAM_MAX_LOCATION_AGE_MS = 5 * 60 * 1000; // 5min
 
 

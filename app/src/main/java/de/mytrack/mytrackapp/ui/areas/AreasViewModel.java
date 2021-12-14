@@ -1,76 +1,88 @@
 package de.mytrack.mytrackapp.ui.areas;
 
-import android.util.Log;
+import android.os.AsyncTask;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
+
+import de.mytrack.mytrackapp.MyApplication;
+import de.mytrack.mytrackapp.data.AppDatabase;
+import de.mytrack.mytrackapp.data.Area;
+import de.mytrack.mytrackapp.data.AreaPoint;
 
 public class AreasViewModel extends ViewModel {
 
-    // create a helper class that stores information of a polygon
-    // TODO: create a real class with database for this
-    public static class Area {
-        public int id;
-        public String name;
-        public List<LatLng> points;
-
-        public Area(String name, @NonNull LatLng point) {
-            this.id = new Random().nextInt();
-            this.name = name;
-            this.points = new ArrayList<>();
-
-            this.points.add(new LatLng(point.latitude - 5, point.longitude - 5));
-            this.points.add(new LatLng(point.latitude - 5, point.longitude + 5));
-            this.points.add(new LatLng(point.latitude + 5, point.longitude + 5));
-            this.points.add(new LatLng(point.latitude + 5, point.longitude - 5));
-        }
-    }
-
     // store the polygons in a LiveData object to get updates
-    private final MutableLiveData<List<Area>> mAreas;
+    private final LiveData<List<Area>> mAreas;
+    private final MutableLiveData<Area> mFocusedArea;
+
+    private final AppDatabase mDatabase = MyApplication.appContainer.database;
 
     public AreasViewModel() {
-        mAreas = new MutableLiveData<>();
-        mAreas.setValue(new ArrayList<>());
+        mFocusedArea = new MutableLiveData<>();
+        mAreas = mDatabase.areaDao().getAllAreasWithPoints();
     }
 
-    public void onAddArea(String name, LatLng point) {
-        mAreas.getValue().add(new Area(name, point));
-        // notify observers
-        mAreas.setValue(mAreas.getValue());
+    public void onAddArea(String name, @NonNull LatLng center) {
+        List<AreaPoint> points = new ArrayList<>();
+
+        AreaPoint point1 = new AreaPoint(center.latitude - 5, center.longitude - 5);
+        AreaPoint point2 = new AreaPoint(center.latitude - 5, center.longitude + 5);
+        AreaPoint point3 = new AreaPoint(center.latitude + 5, center.longitude + 5);
+        AreaPoint point4 = new AreaPoint(center.latitude + 5, center.longitude - 5);
+
+        points.add(point1);
+        points.add(point2);
+        points.add(point3);
+        points.add(point4);
+
+        Area area = new Area(name, points);
+        AsyncTask.execute(() -> mDatabase.areaDao().insertAreaWithPoints(area));
+    }
+
+    public void onAddArea(String name, @NonNull LatLngBounds bounds) {
+        List<AreaPoint> points = new ArrayList<>();
+
+        AreaPoint point1 = new AreaPoint(bounds.southwest.latitude, bounds.southwest.longitude);
+        AreaPoint point2 = new AreaPoint(bounds.southwest.latitude, bounds.northeast.longitude);
+        AreaPoint point3 = new AreaPoint(bounds.northeast.latitude, bounds.northeast.longitude);
+        AreaPoint point4 = new AreaPoint(bounds.northeast.latitude, bounds.southwest.longitude);
+
+        points.add(point1);
+        points.add(point2);
+        points.add(point3);
+        points.add(point4);
+
+        Area area = new Area(name, points);
+        AsyncTask.execute(() -> mDatabase.areaDao().insertAreaWithPoints(area));
+    }
+
+    public void onDeleteArea(@NonNull Area area) {
+        AsyncTask.execute(() -> mDatabase.areaDao().deleteAreaWithPoints(area));
     }
 
     public void onAreaChanged(Area area) {
-        List<Area> areas = mAreas.getValue();
-        if (areas == null)
-            areas = new ArrayList<>();
+        AsyncTask.execute(() -> mDatabase.areaDao().insertAreaWithPoints(area));
+    }
 
-        // search for area with same id and replace it
-        boolean found = false;
-        for (int i = 0; i < areas.size(); i++) {
-            if (areas.get(i).id == area.id) {
-                Log.d("main", "Area " + area.id + " at index " + i + " changed");
-                areas.set(i, area);
-                found = true;
-            }
-        }
-
-        if (!found)
-            areas.add(area);
-
-        // notify observers
-        mAreas.setValue(areas);
+    public void onFocus(@Nullable Area area) {
+        mFocusedArea.setValue(area);
     }
 
     public LiveData<List<Area>> getAreas() {
         return mAreas;
+    }
+
+    public LiveData<Area> getFocusedArea() {
+        return mFocusedArea;
     }
 }

@@ -1,18 +1,23 @@
 package de.mytrack.mytrackapp.ui.areas;
 
+import android.graphics.Color;
+import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.transition.TransitionManager;
 
+import com.github.dhaval2404.colorpicker.MaterialColorPickerDialog;
+import com.github.dhaval2404.colorpicker.model.ColorSwatch;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -29,10 +34,11 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.function.Consumer;
 
 import de.mytrack.mytrackapp.R;
 import de.mytrack.mytrackapp.data.AppDatabase;
+import de.mytrack.mytrackapp.data.Area;
+import de.mytrack.mytrackapp.data.AreaPoint;
 import de.mytrack.mytrackapp.data.TimeLocation;
 import de.mytrack.mytrackapp.databinding.FragmentAreasBinding;
 
@@ -42,19 +48,24 @@ public class AreasFragment extends Fragment implements OnMapReadyCallback {
     private static class DraggablePolygon {
         public List<Marker> mMarkers;
         public Polygon mPolygon;
-        private AreasViewModel.Area mArea;
+        private Area mArea;
 
-        public DraggablePolygon(@NonNull GoogleMap map, @NonNull AreasViewModel.Area area) {
+        public DraggablePolygon(@NonNull GoogleMap map, @NonNull Area area) {
             mMarkers = new ArrayList<>();
             mArea = area;
 
+            int color = mArea.color;
+            int fillColor = Color.argb(128, Color.red(color), Color.green(color), Color.blue(color));
+
             // create polygon and markers for the map
             PolygonOptions polygonOptions = new PolygonOptions()
+                    .geodesic(true)
                     .clickable(true)
-                    .fillColor(0x8020b020)
-                    .strokeColor(0xff20b020);
+                    .fillColor(fillColor)
+                    .strokeColor(color);
 
-            for (LatLng corner : area.points) {
+            for (AreaPoint point : area.points) {
+                LatLng corner = new LatLng(point.latitude, point.longitude);
                 polygonOptions.add(corner);
 
                 Marker marker = map.addMarker(new MarkerOptions()
@@ -72,40 +83,73 @@ public class AreasFragment extends Fragment implements OnMapReadyCallback {
         }
 
         public void setMarkerVisible(boolean visible) {
+            if (!isValid())
+                return;
+
             for (Marker marker : mMarkers) {
                 marker.setVisible(visible);
             }
         }
 
-        public void updatePolygon() {
-            // keep markers and polygon in sync
-            List<LatLng> points = new ArrayList<>();
-            for (Marker m : mMarkers) {
-                points.add(m.getPosition());
-            }
+        public void deleteMarker(Marker marker) {
+            mMarkers.remove(marker);
+            marker.remove();
+            updatePolygon();
+        }
 
-            mPolygon.setPoints(points);
-            mArea.points = points;
+        // keep markers and polygon in sync
+        public void updatePolygon() {
+            if (!isValid())
+                return;
+
+            // TODO: implement safety (list sizes, ...)
+            List<LatLng> polygonPoints = mPolygon.getPoints();
+            for (int i = 0; i < mMarkers.size(); i++) {
+                polygonPoints.set(i, mMarkers.get(i).getPosition());
+                mArea.points.get(i).latitude = mMarkers.get(i).getPosition().latitude;
+                mArea.points.get(i).longitude = mMarkers.get(i).getPosition().longitude;
+            }
+            mPolygon.setPoints(polygonPoints);
         }
 
         // called when a polygon was clicked
         // zooms onto the polygon and enables 'edit mode'
         public void focus(GoogleMap map) {
-            LatLngBounds.Builder builder = new LatLngBounds.Builder();
+            if (!isValid())
+                return;
+
+            LatLngBounds.Builder tmp = new LatLngBounds.Builder();
             for (Marker marker : mMarkers) {
-                builder.include(marker.getPosition());
+                tmp.include(marker.getPosition());
             }
 
-            LatLng center = builder.build().getCenter();
-            LatLng offset = new LatLng(center.latitude - 5.0, center.longitude);
+            LatLngBounds tmpBounds = tmp.build();
+            LatLng center = tmpBounds.getCenter();
+            double centLat = center.latitude;
+            double centLong = center.longitude;
 
-            setMarkerVisible(true);
-            map.animateCamera(CameraUpdateFactory.newLatLngZoom(offset, 4.0f), 500, null);
+            // current version just scales the bounds to center the area in the top section
+            // TODO: improve calculation (big areas get cut off at the bottom)
+            double newSouthWestLat = centLat + (tmpBounds.southwest.latitude - centLat) * 4.0;
+            double newSouthWestLong = centLong + (tmpBounds.southwest.longitude - centLong) * 1.5;
+
+            double newNorthEastLat = centLat + (tmpBounds.northeast.latitude - centLat) * 1.5;
+            double newNorthEastLong = centLong + (tmpBounds.northeast.longitude - centLong) * 1.5;
+
+            LatLng newSouthWest = new LatLng(newSouthWestLat, newSouthWestLong);
+            LatLng newNorthEast = new LatLng(newNorthEastLat, newNorthEastLong);
+
+            LatLngBounds bounds = new LatLngBounds(newSouthWest, newNorthEast);
+
+            map.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 0), 300, null);
         }
 
         // called when an area is removed
         // removes all the markers and the polygon from the map
         public void delete() {
+            if (!isValid())
+                return;
+
             mPolygon.remove();
             for (Marker marker : mMarkers) {
                 marker.remove();
@@ -116,8 +160,12 @@ public class AreasFragment extends Fragment implements OnMapReadyCallback {
             mArea = null;
         }
 
-        public AreasViewModel.Area getArea() {
+        public Area getArea() {
             return mArea;
+        }
+
+        private boolean isValid() {
+            return mPolygon != null && mMarkers != null && mArea != null;
         }
     }
 
@@ -130,8 +178,9 @@ public class AreasFragment extends Fragment implements OnMapReadyCallback {
     private final List<DraggablePolygon> mPolygons = new ArrayList<>();
     private DraggablePolygon mCurrentFocused = null;
 
-
-    private List<Marker> mHistoryMarkers = new ArrayList<>();
+    // only used for debugging purposes
+    // TODO: remove
+    private final List<Marker> mHistoryMarkers = new ArrayList<>();
 
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -140,16 +189,69 @@ public class AreasFragment extends Fragment implements OnMapReadyCallback {
                 new ViewModelProvider(this).get(AreasViewModel.class);
 
         binding = FragmentAreasBinding.inflate(inflater, container, false);
+        binding.setLifecycleOwner(getViewLifecycleOwner());
         binding.setViewModel(areasViewModel);
 
         binding.fab.setOnClickListener(view -> {
             if (mMap != null) {
                 // add a new area in the center of the screen
-                LatLng center = mMap.getProjection().getVisibleRegion().latLngBounds.getCenter();
+                LatLngBounds visibleBounds = mMap.getProjection().getVisibleRegion().latLngBounds;
+                LatLng center = visibleBounds.getCenter();
+
+                double latDist = Math.abs(visibleBounds.northeast.latitude - visibleBounds.southwest.latitude);
+                double longDist = Math.abs(visibleBounds.northeast.longitude - visibleBounds.southwest.longitude);
+
+                double quarterLat = latDist / 4.0;
+                double quarterLong = longDist / 4.0;
+
+                LatLngBounds.Builder builder = new LatLngBounds.Builder();
+                builder.include(new LatLng(center.latitude - quarterLat, center.longitude - quarterLong));
+                builder.include(new LatLng(center.latitude - quarterLat, center.longitude + quarterLong));
+                builder.include(new LatLng(center.latitude + quarterLat, center.longitude + quarterLong));
+                builder.include(new LatLng(center.latitude + quarterLat, center.longitude - quarterLong));
+
                 // TODO: change name
-                areasViewModel.onAddArea("TestArea", center);
+                areasViewModel.onAddArea("New Area", builder.build());
             }
         });
+
+        binding.areaTitleText.setOnEditorActionListener((textView, actionId, keyEvent) -> {
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                if (mCurrentFocused != null && mCurrentFocused.isValid()) {
+                    mCurrentFocused.getArea().name = textView.getText().toString();
+                    areasViewModel.onAreaChanged(mCurrentFocused.getArea());
+
+                    textView.clearFocus();
+                }
+            }
+            return false;
+        });
+
+        binding.areaColorFrame.setOnClickListener(view -> new MaterialColorPickerDialog.Builder(view.getContext())
+                .setColorSwatch(ColorSwatch._500)
+                .setColorListener((color, colorHex) -> {
+                    if (mCurrentFocused != null && mCurrentFocused.isValid()) {
+                        mCurrentFocused.getArea().color = color;
+                        areasViewModel.onAreaChanged(mCurrentFocused.getArea());
+                    }
+                })
+                .show());
+
+        binding.areaAddReminderBtn.setOnClickListener(view -> {
+            // TODO: implement reminder
+            Log.d("main", "Reminder not yet implemented");
+            Toast.makeText(AreasFragment.this.getActivity(), "Reminder not yet implemented", Toast.LENGTH_SHORT).show();
+        });
+
+        binding.areaDeleteBtn.setOnClickListener(view -> {
+            if (mCurrentFocused == null || !mCurrentFocused.isValid())
+                return;
+
+            Area area = mCurrentFocused.getArea();
+            areasViewModel.onDeleteArea(area);
+        });
+
+
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
@@ -170,19 +272,68 @@ public class AreasFragment extends Fragment implements OnMapReadyCallback {
         this.mMap = googleMap;
 
         mMap.setOnPolygonClickListener(polygon -> {
-            Log.d("main", "Polygon click");
-
             // search for clicked polygon object and focus on it
             for (DraggablePolygon dragPoly : mPolygons) {
                 if (polygon.equals(dragPoly.mPolygon)) {
-                    focusOn(dragPoly);
+                    focusOn(dragPoly, true);
                     break;
                 }
             }
         });
 
         // unfocus the current polygon
-        mMap.setOnMapClickListener(latLng -> focusOn(null));
+        mMap.setOnMapClickListener(latLng -> focusOn(null, true));
+
+        mMap.setOnMapLongClickListener(latLng -> {
+            // insert a new point into the polygon on long click
+            if (mCurrentFocused != null && mCurrentFocused.isValid()) {
+                // TODO: improve algorithm
+                // at the moment it places a new point between the 2 closest points
+                // this sometimes leads to unexpected connections of points
+                // better calculate the distance to the edges and do some bounding border
+
+                int lowestIndex = -1;
+                int secondLowestIndex = -1;
+
+                float lowestDistance = Float.MAX_VALUE;
+                float secondLowestDistance = Float.MAX_VALUE;
+
+                for (int i = 0; i < mCurrentFocused.getArea().points.size(); i++) {
+                    AreaPoint current = mCurrentFocused.getArea().points.get(i);
+                    float[] tmp = new float[3];
+                    Location.distanceBetween(current.latitude, current.longitude, latLng.latitude, latLng.longitude, tmp);
+                    float dist = tmp[0];
+
+                    if (dist < lowestDistance) {
+                        secondLowestIndex = lowestIndex;
+                        lowestIndex = i;
+                        secondLowestDistance = lowestDistance;
+                        lowestDistance = dist;
+                    } else if (dist < secondLowestDistance) {
+                        secondLowestIndex = i;
+                        secondLowestDistance = dist;
+                    }
+                }
+
+                int idx = Math.max(lowestIndex, secondLowestIndex);
+                // handle the case when you insert a point between the first and the last point
+                if (Math.min(lowestIndex, secondLowestIndex) == 0)
+                    idx += 1;
+                mCurrentFocused.getArea().points.add(idx, new AreaPoint(latLng.latitude, latLng.longitude));
+                areasViewModel.onAreaChanged(mCurrentFocused.getArea());
+            }
+        });
+
+        // delete point on marker single click
+        mMap.setOnMarkerClickListener(marker -> {
+            DraggablePolygon dragPoly = findDragPoly(marker);
+            if (dragPoly != null) {
+                dragPoly.deleteMarker(marker);
+                areasViewModel.onAreaChanged(dragPoly.getArea());
+            }
+
+            return true;
+        });
 
         // update the polygon when a marker is dragged
         mMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
@@ -209,15 +360,26 @@ public class AreasFragment extends Fragment implements OnMapReadyCallback {
         });
 
         // receive updates when the area data changes
+        // this is called whenever an area gets inserted, changed or deleted in the database
+        // Areas may get new id's even if they weren't changed
         areasViewModel.getAreas().observe(getViewLifecycleOwner(), areas -> {
-            Log.d("main", "Areas changed");
+            // find the new Area object which represents the currently focused area
+            Area newFocused = null;
+            if (mCurrentFocused != null) {
+                for (Area area : areas) {
+                    if (area.pointsEqual(mCurrentFocused.getArea())) {
+                        newFocused = area;
+                        break;
+                    }
+                }
+            }
 
             // handle removed areas
             List<DraggablePolygon> deletes = new ArrayList<>();
             for (DraggablePolygon dragPoly : mPolygons) {
                 boolean found = false;
 
-                for (AreasViewModel.Area area : areas) {
+                for (Area area : areas) {
                     if (area.equals(dragPoly.getArea())) {
                         found = true;
                         break;
@@ -232,16 +394,29 @@ public class AreasFragment extends Fragment implements OnMapReadyCallback {
             mPolygons.removeAll(deletes);
 
             // and handle new areas
-            for (AreasViewModel.Area area : areas) {
+            for (Area area : areas) {
                 if (findDragPoly(area) == null) {
                     DraggablePolygon dragPoly = new DraggablePolygon(mMap, area);
                     mPolygons.add(dragPoly);
+
+                    if (area == newFocused) {
+                        focusOn(dragPoly, false);
+                    }
                 }
             }
+
+            // no focused area anymore - unfocus
+            if (newFocused == null)
+                focusOn(null, true);
         });
 
 
 
+        /*
+        The following code is used to visualize the tracked location data of the current day.
+        It adds a Marker for every position and even listens for new updates.
+        This code will probably be deleted in the following versions
+         */
 
         // today
         Calendar begin = new GregorianCalendar();
@@ -279,7 +454,7 @@ public class AreasFragment extends Fragment implements OnMapReadyCallback {
     }
 
     // helper function to find a DraggablePolygon with an Area
-    private @Nullable DraggablePolygon findDragPoly(AreasViewModel.Area area) {
+    private @Nullable DraggablePolygon findDragPoly(Area area) {
         for (DraggablePolygon dragPoly : mPolygons) {
             if (area.equals(dragPoly.getArea()))
                 return dragPoly;
@@ -296,30 +471,23 @@ public class AreasFragment extends Fragment implements OnMapReadyCallback {
     // handles focus change
     // unfocuses old polygon and focuses the new
     // also shows/hides the bottom sheet and the fab
-    private void focusOn(@Nullable DraggablePolygon dragPoly) {
-        if (dragPoly != null) {
-            if (mCurrentFocused != null) {
-                mCurrentFocused.setMarkerVisible(false);
-            }
-
-            mCurrentFocused = dragPoly;
-            dragPoly.focus(mMap);
-
-            TransitionManager.beginDelayedTransition((ViewGroup) binding.getRoot());
-            binding.bottomSheet.setVisibility(View.VISIBLE);
-            binding.fab.setVisibility(View.GONE);
-        } else {
-            if (mCurrentFocused != null) {
-                mCurrentFocused.setMarkerVisible(false);
-                mCurrentFocused = null;
-            }
-
-            mMap.animateCamera(CameraUpdateFactory.zoomOut());
-
-            TransitionManager.beginDelayedTransition((ViewGroup) binding.getRoot());
-            binding.bottomSheet.setVisibility(View.GONE);
-            binding.fab.setVisibility(View.VISIBLE);
+    private void focusOn(@Nullable DraggablePolygon dragPoly, boolean move) {
+        if (mCurrentFocused != null) {
+            mCurrentFocused.setMarkerVisible(false);
         }
+        mCurrentFocused = dragPoly;
+
+        if (dragPoly != null) {
+            dragPoly.setMarkerVisible(true);
+
+            if (move)
+                dragPoly.focus(mMap);
+        } else if (move) {
+            mMap.animateCamera(CameraUpdateFactory.zoomOut(), 300, null);
+        }
+
+        areasViewModel.onFocus(dragPoly != null ? dragPoly.getArea() : null);
+        TransitionManager.beginDelayedTransition((ViewGroup) binding.getRoot());
     }
 
     // helper function to find and update a DraggablePolygon with a Marker

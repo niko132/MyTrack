@@ -13,7 +13,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="-48dp"
-            android:visibility="gone"
+            android:clickable="true"
+            android:focusable="false"
+            android:visibility='@{viewModel.focusedArea != null ? View.VISIBLE : View.GONE}'
             app:cardCornerRadius="48dp"
             app:contentPadding="36dp"
             app:contentPaddingBottom="84dp"
@@ -29,29 +31,48 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="16dp">
 
-                    <FrameLayout
-                        android:id="@+id/color_frame"
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:layout_alignParentEnd="true"
-                        android:layout_alignParentRight="true"
-                        android:background="#ff0000" />
-
-                    <androidx.appcompat.widget.AppCompatTextView
+                    <androidx.appcompat.widget.AppCompatEditText
                         android:id="@+id/area_title_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
-                        android:text="Supermarkt"
+                        android:imeOptions="actionDone"
+                        android:inputType="textCapWords|textNoSuggestions"
+                        android:singleLine="true"
+                        android:text='@{viewModel.focusedArea.name}'
                         android:textSize="24sp" />
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_alignParentRight="true"
+                        app:cardCornerRadius="9999dp">
+
+                        <FrameLayout
+                            android:id="@+id/area_color_frame"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:background='@{viewModel.focusedArea.color}'
+                            android:foreground="?android:attr/selectableItemBackground"/>
+                    </androidx.cardview.widget.CardView>
                 </RelativeLayout>
 
                 <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/area_add_reminder_btn"
                     style="@style/Widget.AppCompat.Button.Colored"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:text="Reminder Hinzufügen" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/area_delete_btn"
+                    style="@style/Widget.AppCompat.Button.Colored"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:text="Löschen" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
@@ -71,13 +92,14 @@
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
             android:src="@drawable/ic_add_24dp"
+            android:visibility='@{viewModel.focusedArea == null ? View.VISIBLE : View.GONE}'
             app:layout_constraintBottom_toTopOf="@id/bottom_sheet"
             app:layout_constraintEnd_toEndOf="parent"
             app:tint="#ffffff" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <data>
-
+        <import type="android.view.View"/>
         <variable
             name="viewModel"
             type="de.mytrack.mytrackapp.ui.areas.AreasViewModel" />
