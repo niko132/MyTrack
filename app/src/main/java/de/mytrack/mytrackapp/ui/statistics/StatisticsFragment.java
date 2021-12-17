@@ -6,10 +6,17 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.viewpager2.adapter.FragmentStateAdapter;
 
+import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
+
+import de.mytrack.mytrackapp.databinding.FragmentDemoBinding;
 import de.mytrack.mytrackapp.databinding.FragmentStatisticsBinding;
+import de.mytrack.mytrackapp.ui.statistics.views.CalendarViewFragment;
 
 public class StatisticsFragment extends Fragment {
 
@@ -29,8 +36,66 @@ public class StatisticsFragment extends Fragment {
     }
 
     @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        StatisticViewsAdapter adapter = new StatisticViewsAdapter(this);
+        binding.viewPager.setAdapter(adapter);
+
+        new TabLayoutMediator(binding.tabLayout, binding.viewPager, (tab, position) -> tab.setText("Tab #" + (position + 1))).attach();
+    }
+
+    @Override
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+    }
+
+    public static class StatisticViewsAdapter extends FragmentStateAdapter {
+
+        public StatisticViewsAdapter(@NonNull Fragment fragment) {
+            super(fragment);
+        }
+
+        @NonNull
+        @Override
+        public Fragment createFragment(int position) {
+            if (position == 0) {
+                return new CalendarViewFragment();
+            }
+            
+            Fragment demoFragment = new DemoFragment();
+            Bundle args = new Bundle();
+            args.putInt("aaa", position + 1);
+            demoFragment.setArguments(args);
+
+            return demoFragment;
+        }
+
+        @Override
+        public int getItemCount() {
+            return 10;
+        }
+    }
+
+    public static class DemoFragment extends Fragment {
+
+        private FragmentDemoBinding binding;
+
+        @Nullable
+        @Override
+        public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+            binding = FragmentDemoBinding.inflate(inflater, container, false);
+
+            return binding.getRoot();
+        }
+
+        @Override
+        public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+            super.onViewCreated(view, savedInstanceState);
+
+            Bundle args = getArguments();
+            binding.textDashboard.setText(Integer.toString(args.getInt("aaa")));
+        }
     }
 }
