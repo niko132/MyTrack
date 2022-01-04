@@ -8,7 +8,9 @@ import androidx.lifecycle.ViewModel;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import de.mytrack.mytrackapp.MyApplication;
 import de.mytrack.mytrackapp.data.AppDatabase;
@@ -18,24 +20,20 @@ import de.mytrack.mytrackapp.data.TimeLocation;
 import de.mytrack.mytrackapp.spheric_geometry.PointOnSphere;
 import de.mytrack.mytrackapp.spheric_geometry.PolygonOnEarth;
 
-public class CalendarViewViewModel extends ViewModel {
+public class AreasViewViewModel extends ViewModel {
 
-    private final LiveData<List<List<VisitedArea>>> mDayData;
+    private final LiveData<List<VisitedAreaDetail>> mAreaDetailData;
 
     private final AppDatabase mDatabase = MyApplication.appContainer.database;
 
-    public CalendarViewViewModel() {
+    public AreasViewViewModel() {
+        // TODO: maybe adjust the time to be considered (whole data, last year/month/week)
         // today
-        Calendar begin = new GregorianCalendar();
+        Calendar end = new GregorianCalendar();
+        Calendar begin = (Calendar) end.clone();
 
-        // reset day, hour, minutes, seconds and millis
-        begin.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
-        setCalendarMidnight(begin);
-
-        Calendar end = (Calendar) begin.clone();
-
-        // end of the current week
-        end.add(Calendar.WEEK_OF_YEAR, 1);
+        // whole last week
+        begin.add(Calendar.WEEK_OF_YEAR, -1);
 
 
         // get the locations and the areas as LiveData
@@ -44,30 +42,30 @@ public class CalendarViewViewModel extends ViewModel {
 
         // define the observable data as a mediator so it gets updated either when
         // the locations change or when the area definitions change
-        MediatorLiveData<List<List<VisitedArea>>> dayData = new MediatorLiveData<>();
-        dayData.addSource(locationsData, timeLocations -> {
+        MediatorLiveData<List<VisitedAreaDetail>> detailData = new MediatorLiveData<>();
+        detailData.addSource(locationsData, timeLocations -> {
             if (locationsData.getValue() != null && areasData.getValue() != null) {
-                List<List<VisitedArea>> tmp = getDailyVisitedAreas(locationsData.getValue(), areasData.getValue());
+                List<VisitedAreaDetail> tmp = getVisitedAreaDetails(locationsData.getValue(), areasData.getValue());
                 if (!tmp.isEmpty())
-                    dayData.setValue(tmp);
+                    detailData.setValue(tmp);
             }
         });
-        dayData.addSource(areasData, areas -> {
+        detailData.addSource(areasData, areas -> {
             if (locationsData.getValue() != null && areasData.getValue() != null) {
-                List<List<VisitedArea>> tmp = getDailyVisitedAreas(locationsData.getValue(), areasData.getValue());
+                List<VisitedAreaDetail> tmp = getVisitedAreaDetails(locationsData.getValue(), areasData.getValue());
                 if (!tmp.isEmpty())
-                    dayData.setValue(tmp);
+                    detailData.setValue(tmp);
             }
         });
-        mDayData = dayData;
+        mAreaDetailData = detailData;
     }
 
     @NonNull
-    private List<List<VisitedArea>> getDailyVisitedAreas(@NonNull List<TimeLocation> locations, @NonNull List<Area> areas) {
+    private List<VisitedAreaDetail> getVisitedAreaDetails(@NonNull List<TimeLocation> locations, @NonNull List<Area> areas) {
         PolygonOnEarth[] polygons = getPolygonsFromAreas(areas);
         List<VisitedArea> visitedAreas = extractVisitedAreas(locations, areas, polygons);
 
-        return splitVisitedAreasAtDays(visitedAreas);
+        return extractVisitedAreaDetails(visitedAreas);
     }
 
     /**
@@ -145,67 +143,61 @@ public class CalendarViewViewModel extends ViewModel {
         return visitedAreas;
     }
 
-    /**
-     * Converts a list of VisitedAreas into a list of lists of VisitedAreas so that every day
-     * has its own list of VisitedAreas.
-     * A VisitedArea that spans across multiple days gets split up into multiple VisitedAreas
-     * and is added to the specific lists of every day.
-     * The outer returned list always has a size of 7 and the inner lists are never null but
-     * the may be empty.
-     */
     @NonNull
-    private List<List<VisitedArea>> splitVisitedAreasAtDays(@NonNull List<VisitedArea> visitedAreas) {
-        // initialize data empty lists for every day
-        List<List<VisitedArea>> daysData = new ArrayList<>();
-        for (int i = 0; i < 7; i++) {
-            daysData.add(new ArrayList<>());
-        }
+    private List<VisitedAreaDetail> extractVisitedAreaDetails(@NonNull List<VisitedArea> visitedAreas) {
+        Map<Area, List<VisitedArea>> allVisitedAreas = new HashMap<>();
 
         for (VisitedArea visitedArea : visitedAreas) {
-            Calendar begin = Calendar.getInstance();
-            begin.setTimeInMillis(visitedArea.mEnterMs);
-
-            Calendar nextDayMidnight = (Calendar) begin.clone();
-            setCalendarMidnight(nextDayMidnight);
-            nextDayMidnight.add(Calendar.DAY_OF_YEAR, 1);
-
-            int beginDay = (begin.get(Calendar.DAY_OF_WEEK) - Calendar.MONDAY + 7) % 7;
-            long currentMs = visitedArea.mEnterMs;
-            long remainingMs = visitedArea.mDurationMs;
-
-            // iterate over every day from the beginning as long as there is time left
-            for (int i = beginDay; i < 7 && remainingMs > 0; i++) {
-                // get the remaining milliseconds of the current day from the currentMs timestamp
-                long remainingDayMs = nextDayMidnight.getTimeInMillis() - currentMs;
-                // take at most the whole day or the remaining milliseconds
-                long duration = Math.min(remainingDayMs, remainingMs);
-
-                // create a new copy for the day and adjust the timestamps
-                VisitedArea copy = new VisitedArea();
-                copy.mArea = visitedArea.mArea;
-                copy.mEnterMs = currentMs;
-                copy.mDurationMs = duration;
-                daysData.get(i).add(copy);
-
-                // advance every variable
-                currentMs = nextDayMidnight.getTimeInMillis();
-                remainingMs -= duration;
-                nextDayMidnight.add(Calendar.DAY_OF_YEAR, 1);
+            List<VisitedArea> allList = allVisitedAreas.get(visitedArea.mArea);
+            if (allList == null) {
+                allList = new ArrayList<>();
+                allVisitedAreas.put(visitedArea.mArea, allList);
             }
+
+            allList.add(visitedArea);
         }
 
-        return daysData;
+        List<VisitedAreaDetail> visitedAreaDetails = new ArrayList<>();
+
+        for (Map.Entry<Area, List<VisitedArea>> entry : allVisitedAreas.entrySet()) {
+            VisitedAreaDetail detail = new VisitedAreaDetail();
+            detail.mArea = entry.getKey();
+
+            long lastEnterMs = 0;
+            long lastExitMs = 0;
+            long averageDurationMs = 0;
+
+            for (VisitedArea visitedArea : entry.getValue()) {
+                long enterMs = visitedArea.mEnterMs;
+                long exitMs = visitedArea.mEnterMs + visitedArea.mDurationMs;
+                long durationMs = visitedArea.mDurationMs;
+
+                if (enterMs > lastEnterMs)
+                    lastEnterMs = enterMs;
+
+                if (exitMs > lastExitMs)
+                    lastExitMs = exitMs;
+
+                averageDurationMs += durationMs;
+            }
+
+            averageDurationMs /= entry.getValue().size();
+
+            detail.mLastEnterMs = lastEnterMs;
+            detail.mLastExitMs = lastExitMs;
+            detail.mAverageDurationMs = averageDurationMs;
+
+            visitedAreaDetails.add(detail);
+        }
+
+        // TODO: sort the list by some value (e.g. recent first)
+        // or show every area in the list
+
+        return visitedAreaDetails;
     }
 
-    private void setCalendarMidnight(@NonNull Calendar calendar) {
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-    }
-
-    public LiveData<List<List<VisitedArea>>> getDayData() {
-        return mDayData;
+    public LiveData<List<VisitedAreaDetail>> getAreaDetailData() {
+        return mAreaDetailData;
     }
 
     static class VisitedArea {
@@ -214,6 +206,13 @@ public class CalendarViewViewModel extends ViewModel {
         public long mEnterMs;
         public long mDurationMs;
 
+    }
+
+    static class VisitedAreaDetail {
+        public Area mArea;
+        public long mLastEnterMs;
+        public long mLastExitMs;
+        public long mAverageDurationMs;
     }
 
 }

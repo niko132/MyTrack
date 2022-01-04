@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">MyTrack</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="title_activity_maps">MapsActivity</string>
+    <string name="title_statistics">Statistiken</string>
+    <string name="title_activities">Aktivitäten</string>
+    <string name="title_areas">Bereiche</string>
+    <string name="title_settings">Einstellungen</string>
+
+    <string name="area_detail_last">Zuletzt: %1$s</string>
+    <string name="area_detail_average_min">Durchs.: %1$dmin</string>
+    <string name="area_detail_average_hours">Durchs.: %1$.1fh</string>
+</resources>

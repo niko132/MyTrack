@@ -11,11 +11,11 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
-import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
 import de.mytrack.mytrackapp.databinding.FragmentDemoBinding;
 import de.mytrack.mytrackapp.databinding.FragmentStatisticsBinding;
+import de.mytrack.mytrackapp.ui.statistics.views.AreasViewFragment;
 import de.mytrack.mytrackapp.ui.statistics.views.CalendarViewFragment;
 
 public class StatisticsFragment extends Fragment {
@@ -62,8 +62,11 @@ public class StatisticsFragment extends Fragment {
         public Fragment createFragment(int position) {
             if (position == 0) {
                 return new CalendarViewFragment();
+            } else if (position == 1) {
+                return new AreasViewFragment();
             }
-            
+
+            // TODO: remove
             Fragment demoFragment = new DemoFragment();
             Bundle args = new Bundle();
             args.putInt("aaa", position + 1);

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">MyTrack</string>
     <string name="title_activity_main">MainActivity</string>
@@ -6,4 +7,8 @@
     <string name="title_activities">Activities</string>
     <string name="title_areas">Areas</string>
     <string name="title_settings">Settings</string>
+
+    <string name="area_detail_last">Last: %1$s</string>
+    <string name="area_detail_average_min">Avg.: %1$dmin</string>
+    <string name="area_detail_average_hours">Avg.: %1$fh</string>
 </resources>
