@@ -17,6 +17,7 @@ import de.mytrack.mytrackapp.databinding.FragmentDemoBinding;
 import de.mytrack.mytrackapp.databinding.FragmentStatisticsBinding;
 import de.mytrack.mytrackapp.ui.statistics.views.AreasViewFragment;
 import de.mytrack.mytrackapp.ui.statistics.views.CalendarViewFragment;
+import de.mytrack.mytrackapp.ui.statistics.views.MapViewFragment;
 
 public class StatisticsFragment extends Fragment {
 
@@ -60,10 +61,13 @@ public class StatisticsFragment extends Fragment {
         @NonNull
         @Override
         public Fragment createFragment(int position) {
-            if (position == 0) {
-                return new CalendarViewFragment();
-            } else if (position == 1) {
-                return new AreasViewFragment();
+            switch(position) {
+                case 0:
+                    return new CalendarViewFragment();
+                case 1:
+                    return new AreasViewFragment();
+                case 2:
+                    return new MapViewFragment();
             }
 
             // TODO: remove
