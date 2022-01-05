@@ -13,7 +13,7 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import com.google.android.material.tabs.TabLayoutMediator;
 
-import de.mytrack.mytrackapp.databinding.FragmentDemoBinding;
+import de.mytrack.mytrackapp.R;
 import de.mytrack.mytrackapp.databinding.FragmentStatisticsBinding;
 import de.mytrack.mytrackapp.ui.statistics.views.AreasViewFragment;
 import de.mytrack.mytrackapp.ui.statistics.views.CalendarViewFragment;
@@ -43,7 +43,10 @@ public class StatisticsFragment extends Fragment {
         StatisticViewsAdapter adapter = new StatisticViewsAdapter(this);
         binding.viewPager.setAdapter(adapter);
 
-        new TabLayoutMediator(binding.tabLayout, binding.viewPager, (tab, position) -> tab.setText("Tab #" + (position + 1))).attach();
+        String[] tabTitles = getResources().getStringArray(R.array.statistics_tab_titles);
+        new TabLayoutMediator(binding.tabLayout, binding.viewPager,(tab, position) ->
+                // TODO: maybe add proper error handling; for now an empty string should be ok
+                tab.setText(position < tabTitles.length ? tabTitles[position] : "")).attach();
     }
 
     @Override
@@ -61,48 +64,19 @@ public class StatisticsFragment extends Fragment {
         @NonNull
         @Override
         public Fragment createFragment(int position) {
-            switch(position) {
-                case 0:
-                    return new CalendarViewFragment();
+            switch (position) {
                 case 1:
                     return new AreasViewFragment();
                 case 2:
                     return new MapViewFragment();
+                default:
+                    return new CalendarViewFragment();
             }
-
-            // TODO: remove
-            Fragment demoFragment = new DemoFragment();
-            Bundle args = new Bundle();
-            args.putInt("aaa", position + 1);
-            demoFragment.setArguments(args);
-
-            return demoFragment;
         }
 
         @Override
         public int getItemCount() {
-            return 10;
-        }
-    }
-
-    public static class DemoFragment extends Fragment {
-
-        private FragmentDemoBinding binding;
-
-        @Nullable
-        @Override
-        public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-            binding = FragmentDemoBinding.inflate(inflater, container, false);
-
-            return binding.getRoot();
-        }
-
-        @Override
-        public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-            super.onViewCreated(view, savedInstanceState);
-
-            Bundle args = getArguments();
-            binding.textDashboard.setText(Integer.toString(args.getInt("aaa")));
+            return 3;
         }
     }
 }

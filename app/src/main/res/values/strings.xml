@@ -8,7 +8,17 @@
     <string name="title_areas">Areas</string>
     <string name="title_settings">Settings</string>
 
+    <string name="statistics_title_calendar">Calendar</string>
+    <string name="statistics_title_areas">Areas</string>
+    <string name="statistics_title_map">Map</string>
+
     <string name="area_detail_last">Last: %1$s</string>
     <string name="area_detail_average_min">Avg.: %1$dmin</string>
     <string name="area_detail_average_hours">Avg.: %1$fh</string>
+
+    <string-array name="statistics_tab_titles">
+        <item>@string/statistics_title_calendar</item>
+        <item>@string/statistics_title_areas</item>
+        <item>@string/statistics_title_map</item>
+    </string-array>
 </resources>

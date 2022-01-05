@@ -8,6 +8,10 @@
     <string name="title_areas">Bereiche</string>
     <string name="title_settings">Einstellungen</string>
 
+    <string name="statistics_title_calendar">Kalender</string>
+    <string name="statistics_title_areas">Bereiche</string>
+    <string name="statistics_title_map">Karte</string>
+
     <string name="area_detail_last">Zuletzt: %1$s</string>
     <string name="area_detail_average_min">Durchs.: %1$dmin</string>
     <string name="area_detail_average_hours">Durchs.: %1$.1fh</string>
