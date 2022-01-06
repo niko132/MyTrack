@@ -228,7 +228,8 @@ public class AreasFragment extends Fragment implements OnMapReadyCallback {
         });
 
         binding.areaColorFrame.setOnClickListener(view -> new MaterialColorPickerDialog.Builder(view.getContext())
-                .setColorSwatch(ColorSwatch._500)
+                // .setColorSwatch(ColorSwatch._500)
+                .setColorRes(getResources().getIntArray(R.array.background_colors))
                 .setColorListener((color, colorHex) -> {
                     if (mCurrentFocused != null && mCurrentFocused.isValid()) {
                         mCurrentFocused.getArea().color = color;

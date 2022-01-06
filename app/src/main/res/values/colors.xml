@@ -7,4 +7,48 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <color name="background_color_1">#c75050</color>
+    <color name="background_color_2">#c77450</color>
+    <color name="background_color_3">#c79750</color>
+    <color name="background_color_4">#c7bb50</color>
+    <color name="background_color_5">#afc750</color>
+    <color name="background_color_6">#8cc750</color>
+    <color name="background_color_7">#68c750</color>
+    <color name="background_color_8">#50c75c</color>
+    <color name="background_color_9">#50c780</color>
+    <color name="background_color_10">#50c7a3</color>
+    <color name="background_color_11">#50c7c7</color>
+    <color name="background_color_12">#50a3c7</color>
+    <color name="background_color_13">#5080c7</color>
+    <color name="background_color_14">#505cc7</color>
+    <color name="background_color_15">#6850c7</color>
+    <color name="background_color_16">#8b50c7</color>
+    <color name="background_color_17">#af50c7</color>
+    <color name="background_color_18">#c750bb</color>
+    <color name="background_color_19">#c75097</color>
+    <color name="background_color_20">#c75074</color>
+
+    <array name="background_colors">
+        <item>@color/background_color_1</item>
+        <item>@color/background_color_2</item>
+        <item>@color/background_color_3</item>
+        <item>@color/background_color_4</item>
+        <item>@color/background_color_5</item>
+        <item>@color/background_color_6</item>
+        <item>@color/background_color_7</item>
+        <item>@color/background_color_8</item>
+        <item>@color/background_color_9</item>
+        <item>@color/background_color_10</item>
+        <item>@color/background_color_11</item>
+        <item>@color/background_color_12</item>
+        <item>@color/background_color_13</item>
+        <item>@color/background_color_14</item>
+        <item>@color/background_color_15</item>
+        <item>@color/background_color_16</item>
+        <item>@color/background_color_17</item>
+        <item>@color/background_color_18</item>
+        <item>@color/background_color_19</item>
+        <item>@color/background_color_20</item>
+    </array>
 </resources>

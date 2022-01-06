@@ -12,6 +12,13 @@
     <string name="statistics_title_areas">Bereiche</string>
     <string name="statistics_title_map">Karte</string>
 
+    <string name="custom_activity_last">Zuletzt: %1$s</string>
+    <string name="custom_activity_total">Gesamt: %1$dx</string>
+
+    <string name="custom_activity_add_name">Name</string>
+    <string name="custom_activity_add_cancel">Abbrechen</string>
+    <string name="custom_activity_add_add">Hinzufügen</string>
+
     <string name="area_detail_last">Zuletzt: %1$s</string>
     <string name="area_detail_average_min">Durchs.: %1$dmin</string>
     <string name="area_detail_average_hours">Durchs.: %1$.1fh</string>

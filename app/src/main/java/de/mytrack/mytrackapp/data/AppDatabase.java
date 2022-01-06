@@ -2,11 +2,18 @@ package de.mytrack.mytrackapp.data;
 
 import android.content.Context;
 
+import androidx.room.AutoMigration;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
-@Database(entities = {TimeLocation.class, Area.class, AreaPoint.class}, version = 3)
+@Database(
+        version = 4,
+        entities = {TimeLocation.class, Area.class, AreaPoint.class, CustomActivity.class},
+        autoMigrations = {
+                @AutoMigration(from = 3, to = 4)
+        }
+        )
 public abstract class AppDatabase extends RoomDatabase {
     private static final String DB_NAME = "mytrack_db";
     private static AppDatabase instance;
@@ -14,7 +21,7 @@ public abstract class AppDatabase extends RoomDatabase {
     public static synchronized AppDatabase getInstance(Context context) {
         if (instance == null) {
             instance = Room.databaseBuilder(context.getApplicationContext(), AppDatabase.class,
-                    DB_NAME).fallbackToDestructiveMigration().build();
+                    DB_NAME).build();
 
             // TODO: remove destructive migration and implement manual migration
         }
@@ -25,4 +32,6 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract LocationDao locationDao();
 
     public abstract AreaDao areaDao();
+
+    public abstract CustomActivityDao customActivityDao();
 }

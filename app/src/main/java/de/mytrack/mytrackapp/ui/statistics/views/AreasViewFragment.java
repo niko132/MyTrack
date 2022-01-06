@@ -63,10 +63,10 @@ public class AreasViewFragment extends Fragment {
             public AreaDetailViewHolder(@NonNull ItemAreaDetailBinding binding) {
                 super(binding.getRoot());
 
-                background = binding.areaDetailBackground;
-                titleTextView = binding.areaDetailTitle;
-                lastVisitedTextView = binding.areaDetailLastVisited;
-                averageDurationTextView = binding.areaDetailAverageDuration;
+                this.background = binding.areaDetailBackground;
+                this.titleTextView = binding.areaDetailTitle;
+                this.lastVisitedTextView = binding.areaDetailLastVisited;
+                this.averageDurationTextView = binding.areaDetailAverageDuration;
             }
         }
 
