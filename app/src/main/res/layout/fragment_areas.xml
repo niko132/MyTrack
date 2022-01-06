@@ -18,7 +18,7 @@
             android:visibility='@{viewModel.focusedArea != null ? View.VISIBLE : View.GONE}'
             app:cardCornerRadius="48dp"
             app:contentPadding="36dp"
-            app:contentPaddingBottom="84dp"
+            app:contentPaddingBottom="56dp"
             app:layout_constraintBottom_toBottomOf="parent">
 
             <LinearLayout
@@ -54,7 +54,7 @@
                             android:layout_width="48dp"
                             android:layout_height="48dp"
                             android:background='@{viewModel.focusedArea.color}'
-                            android:foreground="?android:attr/selectableItemBackground"/>
+                            android:foreground="?android:attr/selectableItemBackground" />
                     </androidx.cardview.widget.CardView>
                 </RelativeLayout>
 
@@ -64,7 +64,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:text="Reminder Hinzufügen" />
+                    android:backgroundTint="?colorPositive"
+                    android:text="@string/areas_add_reminder"
+                    android:textColor="@color/white"/>
 
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/area_delete_btn"
@@ -72,7 +74,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:text="Löschen" />
+                    android:layout_marginTop="24dp"
+                    android:backgroundTint="?colorNegative"
+                    android:text="@string/areas_delete_area"
+                    android:textColor="@color/white"/>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
@@ -99,7 +104,9 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <data>
-        <import type="android.view.View"/>
+
+        <import type="android.view.View" />
+
         <variable
             name="viewModel"
             type="de.mytrack.mytrackapp.ui.areas.AreasViewModel" />

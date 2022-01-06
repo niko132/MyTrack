@@ -23,6 +23,10 @@
     <string name="area_detail_average_min">Avg.: %1$dmin</string>
     <string name="area_detail_average_hours">Avg.: %1$fh</string>
 
+    <string name="areas_add_reminder">Add Reminder</string>
+    <string name="areas_delete_area">Delete</string>
+    <string name="areas_new_area_name">New Area</string>
+
     <string-array name="statistics_tab_titles">
         <item>@string/statistics_title_calendar</item>
         <item>@string/statistics_title_areas</item>

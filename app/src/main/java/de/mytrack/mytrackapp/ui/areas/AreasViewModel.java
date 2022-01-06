@@ -32,24 +32,7 @@ public class AreasViewModel extends ViewModel {
         mAreas = mDatabase.areaDao().getAllAreasWithPoints();
     }
 
-    public void onAddArea(String name, @NonNull LatLng center) {
-        List<AreaPoint> points = new ArrayList<>();
-
-        AreaPoint point1 = new AreaPoint(center.latitude - 5, center.longitude - 5);
-        AreaPoint point2 = new AreaPoint(center.latitude - 5, center.longitude + 5);
-        AreaPoint point3 = new AreaPoint(center.latitude + 5, center.longitude + 5);
-        AreaPoint point4 = new AreaPoint(center.latitude + 5, center.longitude - 5);
-
-        points.add(point1);
-        points.add(point2);
-        points.add(point3);
-        points.add(point4);
-
-        Area area = new Area(name, points);
-        AsyncTask.execute(() -> mDatabase.areaDao().insertAreaWithPoints(area));
-    }
-
-    public void onAddArea(String name, @NonNull LatLngBounds bounds) {
+    public void onAddArea(String name, int color, @NonNull LatLngBounds bounds) {
         List<AreaPoint> points = new ArrayList<>();
 
         AreaPoint point1 = new AreaPoint(bounds.southwest.latitude, bounds.southwest.longitude);
@@ -62,7 +45,7 @@ public class AreasViewModel extends ViewModel {
         points.add(point3);
         points.add(point4);
 
-        Area area = new Area(name, points);
+        Area area = new Area(name, color, points);
         AsyncTask.execute(() -> mDatabase.areaDao().insertAreaWithPoints(area));
     }
 

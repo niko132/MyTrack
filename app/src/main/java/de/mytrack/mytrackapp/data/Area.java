@@ -30,11 +30,6 @@ public class Area {
     }
 
     @Ignore
-    public Area(String name, List<AreaPoint> points) {
-        this(name, 0xff20b020, points);
-    }
-
-    @Ignore
     public Area(String name, int color, List<AreaPoint> points) {
         this.name = name;
         this.color = color;

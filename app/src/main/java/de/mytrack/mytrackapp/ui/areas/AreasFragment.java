@@ -210,8 +210,11 @@ public class AreasFragment extends Fragment implements OnMapReadyCallback {
                 builder.include(new LatLng(center.latitude + quarterLat, center.longitude + quarterLong));
                 builder.include(new LatLng(center.latitude + quarterLat, center.longitude - quarterLong));
 
-                // TODO: change name
-                areasViewModel.onAddArea("New Area", builder.build());
+                int[] colors = getResources().getIntArray(R.array.background_colors);
+                int color = colors[(int) (System.currentTimeMillis() % colors.length)];
+
+                areasViewModel.onAddArea(getResources().getString(R.string.areas_new_area_name),
+                        color, builder.build());
             }
         });
 
@@ -228,7 +231,6 @@ public class AreasFragment extends Fragment implements OnMapReadyCallback {
         });
 
         binding.areaColorFrame.setOnClickListener(view -> new MaterialColorPickerDialog.Builder(view.getContext())
-                // .setColorSwatch(ColorSwatch._500)
                 .setColorRes(getResources().getIntArray(R.array.background_colors))
                 .setColorListener((color, colorHex) -> {
                     if (mCurrentFocused != null && mCurrentFocused.isValid()) {

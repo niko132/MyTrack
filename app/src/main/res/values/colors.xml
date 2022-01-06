@@ -8,6 +8,15 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
+    <color name="colorPositive">#65cf33</color>
+    <color name="colorNegative">#cf3333</color>
+
+    <color name="colorChipLight">#e7e7e7</color>
+    <color name="colorChipDark">#555</color>
+
+    <color name="colorChipTextLight">#444</color>
+    <color name="colorChipTextDark">#ccc</color>
+
     <color name="background_color_1">#c75050</color>
     <color name="background_color_2">#c77450</color>
     <color name="background_color_3">#c79750</color>

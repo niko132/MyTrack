@@ -22,4 +22,8 @@
     <string name="area_detail_last">Zuletzt: %1$s</string>
     <string name="area_detail_average_min">Durchs.: %1$dmin</string>
     <string name="area_detail_average_hours">Durchs.: %1$.1fh</string>
+
+    <string name="areas_add_reminder">Reminder hinzufügen</string>
+    <string name="areas_delete_area">Löschen</string>
+    <string name="areas_new_area_name">Neuer Bereich</string>
 </resources>
