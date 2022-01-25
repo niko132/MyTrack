@@ -8,10 +8,11 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
 @Database(
-        version = 4,
-        entities = {TimeLocation.class, Area.class, AreaPoint.class, CustomActivity.class},
+        version = 5,
+        entities = {TimeLocation.class, Area.class, AreaPoint.class, CustomActivity.class, LocationNetworks.class},
         autoMigrations = {
-                @AutoMigration(from = 3, to = 4)
+                @AutoMigration(from = 3, to = 4),
+                @AutoMigration(from = 4, to = 5)
         }
         )
 public abstract class AppDatabase extends RoomDatabase {
@@ -22,8 +23,6 @@ public abstract class AppDatabase extends RoomDatabase {
         if (instance == null) {
             instance = Room.databaseBuilder(context.getApplicationContext(), AppDatabase.class,
                     DB_NAME).build();
-
-            // TODO: remove destructive migration and implement manual migration
         }
 
         return instance;
@@ -34,4 +33,6 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract AreaDao areaDao();
 
     public abstract CustomActivityDao customActivityDao();
+
+    public abstract LocationNetworksDao locationNetworksDao();
 }

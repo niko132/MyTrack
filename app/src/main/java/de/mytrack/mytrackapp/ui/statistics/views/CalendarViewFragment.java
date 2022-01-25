@@ -15,6 +15,7 @@ import androidx.lifecycle.ViewModelProvider;
 import java.util.Calendar;
 import java.util.List;
 
+import de.mytrack.mytrackapp.Utils.VisitedArea;
 import de.mytrack.mytrackapp.databinding.FragmentCalendarViewBinding;
 
 public class CalendarViewFragment extends Fragment {
@@ -53,7 +54,7 @@ public class CalendarViewFragment extends Fragment {
             for (int i = 0; i < 7; i++) {
                 containers[i].removeAllViews();
 
-                List<CalendarViewViewModel.VisitedArea> dayAreas = lists.get(i);
+                List<VisitedArea> dayAreas = lists.get(i);
                 Calendar calendar = Calendar.getInstance();
                 calendar.set(Calendar.DAY_OF_WEEK, (i + 1) % 7 + 1);
                 calendar.set(Calendar.HOUR_OF_DAY, 0);
@@ -62,7 +63,7 @@ public class CalendarViewFragment extends Fragment {
                 calendar.set(Calendar.MILLISECOND, 0);
                 long lastAreaLeaveMs = calendar.getTime().getTime();
 
-                for (CalendarViewViewModel.VisitedArea visitedArea : dayAreas) {
+                for (VisitedArea visitedArea : dayAreas) {
                     long whiteSpaceMillis = visitedArea.mEnterMs - lastAreaLeaveMs;
 
                     if (whiteSpaceMillis > 0) {

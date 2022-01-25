@@ -17,7 +17,6 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.transition.TransitionManager;
 
 import com.github.dhaval2404.colorpicker.MaterialColorPickerDialog;
-import com.github.dhaval2404.colorpicker.model.ColorSwatch;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -35,8 +34,8 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import de.mytrack.mytrackapp.MyApplication;
 import de.mytrack.mytrackapp.R;
-import de.mytrack.mytrackapp.data.AppDatabase;
 import de.mytrack.mytrackapp.data.Area;
 import de.mytrack.mytrackapp.data.AreaPoint;
 import de.mytrack.mytrackapp.data.TimeLocation;
@@ -438,7 +437,7 @@ public class AreasFragment extends Fragment implements OnMapReadyCallback {
         // next day
         end.add(Calendar.DAY_OF_MONTH, 1);
 
-        AppDatabase.getInstance(getContext()).locationDao().getAllBetween(begin.getTime().getTime(), end.getTime().getTime()).observe(getViewLifecycleOwner(), timeLocations -> {
+        MyApplication.appContainer.database.locationDao().getAllBetween(begin.getTime().getTime(), end.getTime().getTime()).observe(getViewLifecycleOwner(), timeLocations -> {
             Log.d("main", "Fetched " + timeLocations.size() + " positions");
 
             for (Marker marker : mHistoryMarkers) {

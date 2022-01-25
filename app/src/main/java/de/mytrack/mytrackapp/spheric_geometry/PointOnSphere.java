@@ -1,8 +1,27 @@
 package de.mytrack.mytrackapp.spheric_geometry;
 
+import androidx.annotation.NonNull;
+
+import java.util.List;
+
+import de.mytrack.mytrackapp.data.AreaPoint;
+
 public class PointOnSphere extends Vector3d{
     protected final double latitude;
     protected final double longitude;
+
+    @NonNull
+    public static PointOnSphere[] from(@NonNull List<AreaPoint> points) {
+        PointOnSphere[] pointsOnSphere = new PointOnSphere[points.size()];
+
+        for (int i = 0; i < points.size(); i++) {
+            AreaPoint point = points.get(i);
+            PointOnSphere pointOnSphere = new PointOnSphere(point.latitude, point.longitude);
+            pointsOnSphere[i] = pointOnSphere;
+        }
+
+        return pointsOnSphere;
+    }
 
     public PointOnSphere(double latitude, double longitude){
         super(

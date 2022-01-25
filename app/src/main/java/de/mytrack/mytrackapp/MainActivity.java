@@ -3,7 +3,6 @@ package de.mytrack.mytrackapp;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,19 +13,13 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
-import androidx.lifecycle.Observer;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
-import de.mytrack.mytrackapp.data.AppDatabase;
-import de.mytrack.mytrackapp.data.Area;
-import de.mytrack.mytrackapp.data.AreaPoint;
 import de.mytrack.mytrackapp.data.TimeLocation;
 import de.mytrack.mytrackapp.databinding.ActivityMainBinding;
 
@@ -87,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
         SmartLocationService.startService(this);
 
         // print the whole database
-        AppDatabase.getInstance(this).locationDao().getAll().observe(this, timeLocations -> {
+        MyApplication.appContainer.database.locationDao().getAll().observe(this, timeLocations -> {
             Log.d("main", "===================================================");
             for (TimeLocation timeLoc : timeLocations) {
                 Log.d("main", timeLoc.id + ": (" + timeLoc.latitude + ", " + timeLoc.longitude + ") at " + timeLoc.time);

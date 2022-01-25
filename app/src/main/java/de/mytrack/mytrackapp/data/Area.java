@@ -6,8 +6,6 @@ import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
-import com.google.android.gms.maps.model.LatLng;
-
 import java.util.List;
 
 @Entity

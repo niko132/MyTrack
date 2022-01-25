@@ -10,15 +10,15 @@ import androidx.room.Query;
 import java.util.List;
 
 @Dao
-public interface CustomActivityDao {
+public interface LocationNetworksDao {
 
-    @Query("SELECT * FROM CustomActivity")
-    LiveData<List<CustomActivity>> getAll();
+    @Query("SELECT * FROM LocationNetworks")
+    LiveData<List<LocationNetworks>> getAll();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertAll(CustomActivity... activities);
+    void insertAll(LocationNetworks... locationNetworks);
 
     @Delete
-    void delete(CustomActivity activity);
+    void delete(LocationNetworks locationNetworks);
 
 }

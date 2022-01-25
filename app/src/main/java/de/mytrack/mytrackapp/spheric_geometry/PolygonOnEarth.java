@@ -1,5 +1,12 @@
 package de.mytrack.mytrackapp.spheric_geometry;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+import java.util.List;
+
+import de.mytrack.mytrackapp.data.Area;
+
 public class PolygonOnEarth extends PolygonOnSphere{
     /***
      * Represents a polygon on the earth.
@@ -39,6 +46,27 @@ public class PolygonOnEarth extends PolygonOnSphere{
      ***/
 
     protected final double EARTH_RADIUS_IN_KM = 6367.5;
+
+    @Nullable
+    public static PolygonOnEarth from(@NonNull Area area) {
+        PointOnSphere[] points = PointOnSphere.from(area.points);
+
+        try {
+            return new PolygonOnEarth(points);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @NonNull
+    public static PolygonOnEarth[] from(@NonNull List<Area> areas) {
+        PolygonOnEarth[] polygons = new PolygonOnEarth[areas.size()];
+        for (int i = 0; i < areas.size(); i++) {
+            polygons[i] = PolygonOnEarth.from(areas.get(i));
+        }
+        return polygons;
+    }
 
     public PolygonOnEarth(PointOnSphere[] spheric_points) throws Exception {
         super(spheric_points);
