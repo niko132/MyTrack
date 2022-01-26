@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.ListIterator;
 
 public class Exporter {
-    public static void saveDbToFile(Uri uri, Context context) throws IOException{
+    public static void saveDbToFile(Uri uri, Context context) {
         AppDatabase appDatabase = MyApplication.appContainer.database;
         LocationDao locationDao = appDatabase.locationDao();
 
@@ -34,7 +34,7 @@ public class Exporter {
                         openFileDescriptor(uri, "w");
                 FileOutputStream fileOutputStream =
                         new FileOutputStream(pfd.getFileDescriptor());
-                fileOutputStream.write(("time;latitude;longitude").getBytes());
+                fileOutputStream.write(("time;latitude;longitude\n").getBytes());
                 TimeLocation TempTimeLocation = null;
                 while (iterator.hasNext()){
                     TempTimeLocation = iterator.next();
@@ -48,7 +48,5 @@ public class Exporter {
                 e.printStackTrace();
             }
         });
-
-
     }
 }

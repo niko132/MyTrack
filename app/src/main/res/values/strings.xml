@@ -27,6 +27,8 @@
     <string name="areas_delete_area">Delete</string>
     <string name="areas_new_area_name">New Area</string>
 
+    <string name="settings_export_data">Export Data</string>
+
     <string-array name="statistics_tab_titles">
         <item>@string/statistics_title_calendar</item>
         <item>@string/statistics_title_areas</item>

@@ -1,11 +1,8 @@
 package de.mytrack.mytrackapp;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -21,18 +18,14 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.Map;
 
 import de.mytrack.mytrackapp.data.TimeLocation;
 import de.mytrack.mytrackapp.databinding.ActivityMainBinding;
-import de.mytrack.mytrackapp.export.Exporter;
 
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
-    private int CREATE_FILE_REQUEST_CODE = 1234;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,35 +44,7 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(binding.navView, navController);
 
         requestLocationPermission();
-
-        // TODO - remove later
-        Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
-        intent.addCategory(Intent.CATEGORY_OPENABLE);
-        intent.setType("application/txt");
-        intent.putExtra(Intent.EXTRA_TITLE, "mytrack.txt");
-        startActivityForResult(intent, CREATE_FILE_REQUEST_CODE);
     }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent resultData) {
-        super.onActivityResult(requestCode, resultCode, resultData);
-        if (requestCode == CREATE_FILE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            Uri uri = null;
-            if (resultData != null) {
-                uri = resultData.getData();
-                try {
-                    Exporter.saveDbToFile(uri, getApplicationContext());
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-
-
-
 
     @Override
     protected void onStart() {

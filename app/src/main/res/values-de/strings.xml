@@ -26,4 +26,6 @@
     <string name="areas_add_reminder">Reminder hinzufügen</string>
     <string name="areas_delete_area">Löschen</string>
     <string name="areas_new_area_name">Neuer Bereich</string>
+
+    <string name="settings_export_data">Daten exportieren</string>
 </resources>
