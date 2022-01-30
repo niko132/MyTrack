@@ -3,9 +3,16 @@ package de.mytrack.mytrackapp;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.hardware.Sensor;
+import android.hardware.SensorManager;
+import android.hardware.TriggerEvent;
+import android.hardware.TriggerEventListener;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.ParcelFileDescriptor;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -18,10 +25,16 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.util.Map;
 
 import de.mytrack.mytrackapp.data.TimeLocation;
 import de.mytrack.mytrackapp.databinding.ActivityMainBinding;
+import de.mytrack.mytrackapp.export.Exporter;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -37,13 +50,52 @@ public class MainActivity extends AppCompatActivity {
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.navigation_statistics, R.id.navigation_activities, R.id.navigation_areas)
+                R.id.navigation_statistics,
+                R.id.navigation_activities,
+                R.id.navigation_areas,
+                R.id.navigation_settings)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
 
         requestLocationPermission();
+
+
+
+        /*
+        File dbFile = getDatabasePath("mytrack_db");
+
+        ActivityResultLauncher<String> mCreateDocument = registerForActivityResult(
+                new ActivityResultContracts.CreateDocument(), result -> {
+                    if (result != null) {
+                        try {
+                            ParcelFileDescriptor pfd = getContentResolver().
+                                    openFileDescriptor(result, "w");
+
+                            BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(pfd.getFileDescriptor()));
+                            BufferedInputStream bis = new BufferedInputStream(new FileInputStream(dbFile));
+
+                            byte[] buf = new byte[1024];
+                            int length;
+
+                            while ((length = bis.read(buf)) != -1) {
+                                bos.write(buf, 0, length);
+                            }
+
+                            bis.close();
+                            bos.close();
+
+                            pfd.close();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+        );
+
+        mCreateDocument.launch("myTrack.db");
+         */
     }
 
     @Override

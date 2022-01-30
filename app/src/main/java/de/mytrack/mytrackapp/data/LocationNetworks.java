@@ -15,14 +15,9 @@ import java.util.List;
 @Entity
 public class LocationNetworks {
 
-    @PrimaryKey(autoGenerate = true)
-    public long id;
-
-    @ColumnInfo(name = "latitude")
-    public double latitude;
-
-    @ColumnInfo(name = "longitude")
-    public double longitude;
+    @PrimaryKey
+    @ColumnInfo(name = "area_id")
+    public long areaId;
 
     @ColumnInfo(name = "ssids")
     public String ssids;
@@ -32,10 +27,8 @@ public class LocationNetworks {
     }
 
     @Ignore
-    public LocationNetworks(LatLng latLng, List<String> ssids) {
-        this.latitude = latLng.latitude;
-        this.longitude = latLng.longitude;
-
+    public LocationNetworks(Area area, List<String> ssids) {
+        this.areaId = area.id;
         setSSIDs(ssids);
     }
 

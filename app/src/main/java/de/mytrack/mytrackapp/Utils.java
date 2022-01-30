@@ -2,9 +2,11 @@ package de.mytrack.mytrackapp;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskCompletionSource;
 
@@ -27,10 +29,11 @@ public class Utils {
     public static Task<Area> getAreaFromLocation(@NonNull LatLng latLng) {
         TaskCompletionSource<Area> task = new TaskCompletionSource<>();
 
-        MyApplication.appContainer.database.areaDao().getAllAreasWithPoints().observeForever(new Observer<>() {
+        LiveData<List<Area>> areasData = MyApplication.appContainer.database.areaDao().getAllAreasWithPoints();
+        areasData.observeForever(new Observer<>() {
             @Override
             public void onChanged(List<Area> areas) {
-                MyApplication.appContainer.database.areaDao().getAllAreasWithPoints().removeObserver(this);
+                areasData.removeObserver(this);
 
                 Area result = getAreaFromLocation(latLng, areas);
                 task.setResult(result);
@@ -98,6 +101,28 @@ public class Utils {
         }
 
         return visitedAreas;
+    }
+
+    @NonNull
+    public static Task<Area> getAreaFromLastLocation() {
+        TaskCompletionSource<Area> task = new TaskCompletionSource<>();
+
+        LiveData<TimeLocation> locationData = MyApplication.appContainer.database.locationDao().getMostRecent();
+        locationData.observeForever(new Observer<>() {
+            @Override
+            public void onChanged(TimeLocation timeLocation) {
+                locationData.removeObserver(this);
+
+                if (timeLocation != null) {
+                    getAreaFromLocation(new LatLng(timeLocation.latitude, timeLocation.longitude))
+                            .addOnCompleteListener(areaTask -> task.setResult(areaTask.getResult()));
+                } else {
+                    task.setResult(null);
+                }
+            }
+        });
+
+        return task.getTask();
     }
 
     /**

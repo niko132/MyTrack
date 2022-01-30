@@ -410,6 +410,20 @@ public class AreasFragment extends Fragment implements OnMapReadyCallback {
             // no focused area anymore - unfocus
             if (newFocused == null)
                 focusOn(null, true);
+
+            // workaround for new bug where areas won't update when edited
+            // TODO: completely fix it
+            if (newFocused != null) {
+                DraggablePolygon dragPoly = findDragPoly(newFocused);
+                if (dragPoly != null) {
+                    dragPoly.delete();
+                    mPolygons.remove(dragPoly);
+                }
+
+                dragPoly = new DraggablePolygon(mMap, newFocused);
+                mPolygons.add(dragPoly);
+                focusOn(dragPoly, false);
+            }
         });
 
 

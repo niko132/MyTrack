@@ -27,6 +27,9 @@
     <string name="areas_delete_area">Delete</string>
     <string name="areas_new_area_name">New Area</string>
 
+    <string name="settings_normal_battery_sampling_time">Sampling time for normal\nbattery level (51% - 100%):</string>
+    <string name="settings_low_battery_sampling_time">Sampling time for low\nbattery level (31% - 50%):</string>
+    <string name="settings_critical_battery_sampling_time">Sampling time for critical\nbattery level (1% - 30%):</string>
     <string name="settings_export_data">Export Data</string>
 
     <string-array name="statistics_tab_titles">

@@ -9,10 +9,10 @@ import androidx.room.RoomDatabase;
 
 @Database(
         version = 5,
-        entities = {TimeLocation.class, Area.class, AreaPoint.class, CustomActivity.class, LocationNetworks.class},
+        entities = {TimeLocation.class, Area.class, AreaPoint.class, CustomActivity.class, LocationNetworks.class, BatteryDelayTime.class},
         autoMigrations = {
                 @AutoMigration(from = 3, to = 4),
-                @AutoMigration(from = 4, to = 5)
+                @AutoMigration(from = 4, to = 5),
         }
         )
 public abstract class AppDatabase extends RoomDatabase {
@@ -35,4 +35,6 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract CustomActivityDao customActivityDao();
 
     public abstract LocationNetworksDao locationNetworksDao();
+
+    public abstract SettingsDao settingsDao();
 }

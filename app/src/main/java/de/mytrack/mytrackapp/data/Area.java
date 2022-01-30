@@ -7,6 +7,7 @@ import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 public class Area {
@@ -32,6 +33,14 @@ public class Area {
         this.name = name;
         this.color = color;
         this.points = points;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Area area = (Area) o;
+        return id == area.id && color == area.color && Objects.equals(name, area.name) && pointsEqual(area);
     }
 
     public boolean pointsEqual(@NonNull Area rhs) {

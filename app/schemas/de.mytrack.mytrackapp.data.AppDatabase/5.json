@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 5,
-    "identityHash": "0abba766f5f05aaa18917ed508eaafc1",
+    "identityHash": "db38d293c142c02f590d1ddb7973b3b3",
     "entities": [
       {
         "tableName": "TimeLocation",
@@ -164,24 +164,12 @@
       },
       {
         "tableName": "LocationNetworks",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `latitude` REAL NOT NULL, `longitude` REAL NOT NULL, `ssids` TEXT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`area_id` INTEGER NOT NULL, `ssids` TEXT, PRIMARY KEY(`area_id`))",
         "fields": [
           {
-            "fieldPath": "id",
-            "columnName": "id",
+            "fieldPath": "areaId",
+            "columnName": "area_id",
             "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "latitude",
-            "columnName": "latitude",
-            "affinity": "REAL",
-            "notNull": true
-          },
-          {
-            "fieldPath": "longitude",
-            "columnName": "longitude",
-            "affinity": "REAL",
             "notNull": true
           },
           {
@@ -193,9 +181,37 @@
         ],
         "primaryKey": {
           "columnNames": [
-            "id"
+            "area_id"
           ],
-          "autoGenerate": true
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "BatteryDelayTime",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`battery_level` INTEGER NOT NULL DEFAULT 0, `delay_in_min` INTEGER NOT NULL DEFAULT 10, PRIMARY KEY(`battery_level`))",
+        "fields": [
+          {
+            "fieldPath": "batteryLevel",
+            "columnName": "battery_level",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "delayInMin",
+            "columnName": "delay_in_min",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "10"
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "battery_level"
+          ],
+          "autoGenerate": false
         },
         "indices": [],
         "foreignKeys": []
@@ -204,7 +220,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '0abba766f5f05aaa18917ed508eaafc1')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'db38d293c142c02f590d1ddb7973b3b3')"
     ]
   }
 }

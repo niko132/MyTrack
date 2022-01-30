@@ -21,6 +21,9 @@ public interface LocationDao {
     @Query("SELECT * FROM TimeLocation WHERE time BETWEEN :begin AND :end ORDER BY time DESC")
     LiveData<List<TimeLocation>> getAllBetween(long begin, long end);
 
+    @Query("SELECT * FROM TimeLocation ORDER BY time DESC LIMIT 1")
+    LiveData<TimeLocation> getMostRecent();
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertAll(TimeLocation... locations);
 

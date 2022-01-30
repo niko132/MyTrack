@@ -27,5 +27,8 @@
     <string name="areas_delete_area">Löschen</string>
     <string name="areas_new_area_name">Neuer Bereich</string>
 
+    <string name="settings_normal_battery_sampling_time">Abtastrate für normales\nBatterie-Level (51% - 100%):</string>
+    <string name="settings_low_battery_sampling_time">Abtastrate für geringes\nBatterie-Level (31% - 50%):</string>
+    <string name="settings_critical_battery_sampling_time">Abtastrate für kritisches\nBatterie-Level (1% - 30%):</string>
     <string name="settings_export_data">Daten exportieren</string>
 </resources>

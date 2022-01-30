@@ -3,6 +3,7 @@ package de.mytrack.mytrackapp.data;
 import android.os.AsyncTask;
 
 import androidx.annotation.NonNull;
+import androidx.arch.core.util.Function;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
@@ -36,7 +37,7 @@ public abstract class AreaDao {
     abstract void _deleteAllAreas();
 
     @Query("SELECT * FROM Area WHERE id = :id")
-    abstract Area _getArea(int id);
+    abstract LiveData<Area> _getArea(long id);
 
     @Query("SELECT * FROM Area")
     abstract LiveData<List<Area>> _getAllAreas();
@@ -66,6 +67,19 @@ public abstract class AreaDao {
     public void deleteAll() {
         _deleteAllAreas();
         _deleteAllPoints();
+    }
+
+    public LiveData<Area> getAreaWithPoints(long areaId) {
+        return Transformations.switchMap(_getArea(areaId), area -> {
+            MutableLiveData<Area> areaLiveData = new MutableLiveData<>();
+
+            AsyncTask.execute(() -> {
+                area.points = _getAreaPointList(area.id);
+                areaLiveData.postValue(area);
+            });
+
+            return areaLiveData;
+        });
     }
 
     public LiveData<List<Area>> getAllAreasWithPoints() {
