@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -12,8 +13,10 @@ import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 import de.mytrack.mytrackapp.Utils.VisitedArea;
 import de.mytrack.mytrackapp.databinding.FragmentCalendarViewBinding;
@@ -36,6 +39,28 @@ public class CalendarViewFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+
+        TextView[] dayTextViews = new TextView[] {
+                binding.calendarTextMonday,
+                binding.calendarTextTuesday,
+                binding.calendarTextWednesday,
+                binding.calendarTextThursday,
+                binding.calendarTextFriday,
+                binding.calendarTextSaturday,
+                binding.calendarTextSunday
+        };
+
+        Calendar dayOfWeekCalendar = Calendar.getInstance();
+        dayOfWeekCalendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+
+        SimpleDateFormat sdf = new SimpleDateFormat("EEE\ndd.MM", Locale.getDefault());
+
+        for (int i = 0; i < 7; i++) {
+            dayTextViews[i].setText(sdf.format(dayOfWeekCalendar.getTime()));
+            dayOfWeekCalendar.add(Calendar.DAY_OF_WEEK, 1);
+        }
+
 
         calendarViewViewModel.getDayData().observe(getViewLifecycleOwner(), lists -> {
             if (lists.size() != 7)

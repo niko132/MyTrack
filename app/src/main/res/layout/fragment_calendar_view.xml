@@ -12,16 +12,18 @@
             android:layout_height="wrap_content"
             android:baselineAligned="false"
             android:orientation="horizontal"
-            android:weightSum="7">
+            android:weightSum="100">
 
             <LinearLayout
+                android:id="@+id/calendar_container_time"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_weight="9"
                 android:orientation="vertical"
                 android:padding="4dp">
 
                 <androidx.cardview.widget.CardView
+                    android:visibility="invisible"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
@@ -35,7 +37,205 @@
                         android:gravity="center"
                         android:text="Mo."
                         android:textColor="?colorChipText"
-                        android:textSize="16sp"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+                </androidx.cardview.widget.CardView>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="90px"
+                    android:gravity="top|end"
+                    android:textSize="11sp"
+                    android:text="0:00" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="90px"
+                    android:gravity="top|end"
+                    android:textSize="11sp"
+                    android:text="1:00" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="90px"
+                    android:gravity="top|end"
+                    android:textSize="11sp"
+                    android:text="2:00" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="90px"
+                    android:gravity="top|end"
+                    android:textSize="11sp"
+                    android:text="3:00" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="90px"
+                    android:gravity="top|end"
+                    android:textSize="11sp"
+                    android:text="4:00" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="90px"
+                    android:gravity="top|end"
+                    android:textSize="11sp"
+                    android:text="5:00" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="90px"
+                    android:gravity="top|end"
+                    android:textSize="11sp"
+                    android:text="6:00" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="90px"
+                    android:gravity="top|end"
+                    android:textSize="11sp"
+                    android:text="7:00" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="90px"
+                    android:gravity="top|end"
+                    android:textSize="11sp"
+                    android:text="8:00" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="90px"
+                    android:gravity="top|end"
+                    android:textSize="11sp"
+                    android:text="9:00" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="90px"
+                    android:gravity="top|end"
+                    android:textSize="11sp"
+                    android:text="10:00" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="90px"
+                    android:gravity="top|end"
+                    android:textSize="11sp"
+                    android:text="11:00" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="90px"
+                    android:gravity="top|end"
+                    android:textSize="11sp"
+                    android:text="12:00" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="90px"
+                    android:gravity="top|end"
+                    android:textSize="11sp"
+                    android:text="13:00" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="90px"
+                    android:gravity="top|end"
+                    android:textSize="11sp"
+                    android:text="14:00" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="90px"
+                    android:gravity="top|end"
+                    android:textSize="11sp"
+                    android:text="15:00" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="90px"
+                    android:gravity="top|end"
+                    android:textSize="11sp"
+                    android:text="16:00" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="90px"
+                    android:gravity="top|end"
+                    android:textSize="11sp"
+                    android:text="17:00" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="90px"
+                    android:gravity="top|end"
+                    android:textSize="11sp"
+                    android:text="18:00" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="90px"
+                    android:gravity="top|end"
+                    android:textSize="11sp"
+                    android:text="19:00" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="90px"
+                    android:gravity="top|end"
+                    android:textSize="11sp"
+                    android:text="20:00" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="90px"
+                    android:gravity="top|end"
+                    android:textSize="11sp"
+                    android:text="21:00" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="90px"
+                    android:gravity="top|end"
+                    android:textSize="11sp"
+                    android:text="22:00" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="90px"
+                    android:gravity="top|end"
+                    android:textSize="11sp"
+                    android:text="23:00" />
+
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="13"
+                android:orientation="vertical"
+                android:padding="4dp">
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    app:cardBackgroundColor="?colorChip"
+                    app:cardCornerRadius="999dp"
+                    app:contentPadding="4dp">
+
+                    <TextView
+                        android:id="@+id/calendar_text_monday"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="Mo."
+                        android:textColor="?colorChipText"
+                        android:textSize="13sp"
                         android:textStyle="bold" />
                 </androidx.cardview.widget.CardView>
 
@@ -49,7 +249,7 @@
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_weight="13"
                 android:orientation="vertical"
                 android:padding="4dp">
 
@@ -62,12 +262,13 @@
                     app:contentPadding="4dp">
 
                     <TextView
+                        android:id="@+id/calendar_text_tuesday"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:text="Di."
                         android:textColor="?colorChipText"
-                        android:textSize="16sp"
+                        android:textSize="13sp"
                         android:textStyle="bold" />
                 </androidx.cardview.widget.CardView>
 
@@ -81,7 +282,7 @@
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_weight="13"
                 android:orientation="vertical"
                 android:padding="4dp">
 
@@ -94,12 +295,13 @@
                     app:contentPadding="4dp">
 
                     <TextView
+                        android:id="@+id/calendar_text_wednesday"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:text="Mi."
                         android:textColor="?colorChipText"
-                        android:textSize="16sp"
+                        android:textSize="13sp"
                         android:textStyle="bold" />
                 </androidx.cardview.widget.CardView>
 
@@ -113,7 +315,7 @@
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_weight="13"
                 android:orientation="vertical"
                 android:padding="4dp">
 
@@ -126,12 +328,13 @@
                     app:contentPadding="4dp">
 
                     <TextView
+                        android:id="@+id/calendar_text_thursday"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:text="Do."
                         android:textColor="?colorChipText"
-                        android:textSize="16sp"
+                        android:textSize="13sp"
                         android:textStyle="bold" />
                 </androidx.cardview.widget.CardView>
 
@@ -145,7 +348,7 @@
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_weight="13"
                 android:orientation="vertical"
                 android:padding="4dp">
 
@@ -158,12 +361,13 @@
                     app:contentPadding="4dp">
 
                     <TextView
+                        android:id="@+id/calendar_text_friday"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:text="Fr."
                         android:textColor="?colorChipText"
-                        android:textSize="16sp"
+                        android:textSize="13sp"
                         android:textStyle="bold" />
                 </androidx.cardview.widget.CardView>
 
@@ -177,7 +381,7 @@
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_weight="13"
                 android:orientation="vertical"
                 android:padding="4dp">
 
@@ -190,12 +394,13 @@
                     app:contentPadding="4dp">
 
                     <TextView
+                        android:id="@+id/calendar_text_saturday"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:text="Sa."
                         android:textColor="?colorChipText"
-                        android:textSize="16sp"
+                        android:textSize="13sp"
                         android:textStyle="bold" />
                 </androidx.cardview.widget.CardView>
 
@@ -209,7 +414,7 @@
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_weight="13"
                 android:orientation="vertical"
                 android:padding="4dp">
 
@@ -222,12 +427,13 @@
                     app:contentPadding="4dp">
 
                     <TextView
+                        android:id="@+id/calendar_text_sunday"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:text="So."
                         android:textColor="?colorChipText"
-                        android:textSize="16sp"
+                        android:textSize="13sp"
                         android:textStyle="bold" />
                 </androidx.cardview.widget.CardView>
 
